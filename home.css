@@ -1,0 +1,8 @@
+th, td {
+    text-align: center;
+}
+
+
+.day-col {
+    width: 150px; /* Adjust the width of the day columns */
+}
