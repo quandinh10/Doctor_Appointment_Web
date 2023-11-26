@@ -16,22 +16,26 @@ if ($mysqli->query($product_sql) === TRUE) {
 }
 
 
-// Time slot generation and insertion
-$start_time = strtotime('09:00:00');
-$end_time = strtotime('21:00:00');
-$interval = 30 * 60; // 30 minutes in seconds
+$daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+foreach ($daysOfWeek as $day) {
+    $start_time = strtotime('09:00:00');
+    $end_time = strtotime('21:00:00');
+    $interval = 30 * 60; // 30 minutes in seconds
 
-$current_time = $start_time;
-while ($current_time < $end_time) {
-    $start_datetime = date('Y-m-d H:i:s', $current_time);
-    $end_datetime = date('Y-m-d H:i:s', $current_time + $interval);
+    $current_time = $start_time;
+    while ($current_time < $end_time) {
+        $start_time_formatted = date('H:i:s', $current_time);
+        $end_time_formatted = date('H:i:s', $current_time + $interval);
 
-    // Insert into the slot table
-    $sql_insert_slot = "INSERT INTO slot (StartTime, EndTime, statusSlot) VALUES ('$start_datetime', '$end_datetime', 'available')";
-    $mysqli->query($sql_insert_slot);
+        // Insert into the slot table
+        $sql_insert_slot = "INSERT INTO slot (DayOfWeek, StartTime, EndTime, statusSlot) 
+                            VALUES ('$day', '$start_time_formatted', '$end_time_formatted', 'available')";
+        $mysqli->query($sql_insert_slot);
 
-    // Move to the next time slot
-    $current_time += $interval;
+        // Move to the next time slot
+        $current_time += $interval;
+    }
 }
+
 $mysqli->close();
 ?>
