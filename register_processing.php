@@ -26,10 +26,10 @@ else{
     $result = mysqli_query($mysqli,$sql);
     $num = mysqli_num_rows($result); 
     if($num>0)  
-       { 
+    { 
         $_SESSION['exists'] = true; 
-        header('Location: index.php?page=register');
-       }
+        header('Location: index.php?page=login');
+    }
     else { 
         if(($password == $repass)) { 
     
@@ -45,7 +45,7 @@ else{
     
             if ($result) { 
                 $_SESSION['showSuccess'] = true;  
-                header('Location: index.php?page=register');
+                header('Location: index.php?page=login');
             }
             else {
                 $_SESSION['showError'] = true;  
