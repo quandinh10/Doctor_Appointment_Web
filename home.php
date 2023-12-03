@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="home.css">
 <section>
 <div class="container mt-4 overflow-auto">
+    <?php include('calendar/index.html') ?>
     <table class="table table-bordered overflow-auto">
         <thead>
             <tr>
@@ -72,38 +73,63 @@
         </tbody>
     </table>
     <script>
-        function handleTimeslotClick(day, time) {
-            var userRole = '<?php echo $_SESSION['role']; ?>';
-            var color = document.querySelector(`td[onclick='handleTimeslotClick("${day}", "${time}")']`).style.backgroundColor;
-            if (userRole === 'doctor') {
-                if (color === 'green') {
-                    alert(`Doctor clicked timeslot to update to busy on ${day} at ${time}`);
-                    updateTimeslotStatus(day, time, 'updateToBusy');
-                } else if (color === 'red') {
-                    alert(`Doctor clicked timeslot to update to available on ${day} at ${time}`);
-                    updateTimeslotStatus(day, time, 'updateToAvailable');
-                } else {
-                    alert('Invalid state for doctor to update');
-                }
-            } else {
-                if (color === 'green') {
-                    alert(`User clicked available timeslot on ${day} at ${time}`);
-                    makeAppointment(day, time);
-                } else {
-                    alert(`Sorry, the timeslot on ${day} at ${time} is already booked`);
-                }
-            }
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
         }
 
-        function updateTimeslotStatus(day, time, action) {
+        function handleTimeslotClick(wDay, time) {
+            var selectedDay = new Date(getCookie("selected_day"));
+            var month = selectedDay.getUTCMonth() + 1; //months from 1-12
+            var day = selectedDay.getUTCDate() + 1;
+            var year = selectedDay.getUTCFullYear();
+            var userRole = '<?php echo $_SESSION['role']; ?>';
+            var color = document.querySelector(`td[onclick='handleTimeslotClick("${wDay}", "${time}")']`).style.backgroundColor;
+            if (userRole === 'doctor') {
+                if (color === 'green') {
+                    alert(`Doctor clicked timeslot to update to busy on ${day}/${month}/${year}, ${wDay} at ${time}`);
+                    updateTimeslotStatus(year, month, day, wDay, time, 'update', 'busy');
+                } else if (color === 'red') {
+                    alert(`Doctor clicked timeslot to update to available on ${day}/${month}/${year}, ${wDay} at ${time}`);
+                    updateTimeslotStatus(year, month, day, wDay, time, 'update', 'available');
+                } else {
+                    var statusUpdated = prompt(`Choose status for the timeslot on ${day}/${month}/${year}, ${wDay} at ${time}: "available" or "busy"`, 'available');
+
+                    if (statusUpdated === 'available' || statusUpdated === 'busy') {
+                        alert(`Doctor create timeslot of ${statusUpdated} on ${day}/${month}/${year}, ${wDay} at ${time}`);
+                        updateTimeslotStatus(year, month, day, wDay, time, 'firstUpdate', statusUpdated);
+                    } else {
+                        alert('Invalid status option. Please choose "available" or "busy".');
+                    }
+                }
+            } else {
+                var id = '<?php echo $_SESSION['ID']; ?>';
+
+                if (color === 'green') {
+                    alert(`User clicked available timeslot on ${day}/${month}/${year}, ${wDay} at ${time}`);
+                    makeAppointment(year, month, day, wDay, time, id);
+                } else {
+                    alert(`Sorry, the timeslot on ${day}/${month}/${year}, ${wDay} at ${time} is already booked`);
+                }
+            }
+            header("Location: index.php?page=home");
+        }
+
+        function updateTimeslotStatus(year, month, day, wDay, time, action, statusUpdated) {
+            alert(`debugging ${action} ${statusUpdated}`);
             fetch('update_timeslot_status.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    year: year,
+                    month: month,
                     day: day,
+                    wDay: wDay,
                     time: time,
+                    statusUpdated: statusUpdated,
                     action: action,
                 }),
             })
@@ -112,19 +138,23 @@
                 alert(data.message);
             })
             .catch(error => {
-                alert('Error updating timeslot status');
+                alert('Error updating/creating timeslot status');
             });
         }
 
-        function makeAppointment(day, time) {
+        function makeAppointment(year, month, day, wDay, time, id) {
             fetch('make_appointment.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    year: year,
+                    month: month,
                     day: day,
+                    wDay: wDay,
                     time: time,
+                    id: id,
                     action: 'makeAppointment',
                 }),
             })

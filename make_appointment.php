@@ -1,15 +1,22 @@
 <?php
+require_once 'config.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestData = json_decode(file_get_contents('php://input'), true);
 
+    $year = $requestData['year'];
+    $month = $requestData['month'];
     $day = $requestData['day'];
+    $wDay = $requestData['wDay'];
     $time = $requestData['time'];
+    $id = $requestData['id'];
 
-    require_once 'config.php';
-
-    $status = 'busy'; 
-    $sql = "UPDATE slot SET statusSlot = '$status' WHERE DayOfWeek = '$day' AND StartTime = '$time'";
-
+    $statusUpdated = 'busy'; 
+    $sql = "UPDATE slot SET statusSlot = '$statusUpdated', patientID = '$id'
+            WHERE Year = $year AND
+            Month = $month AND
+            Day = $day And
+            DayOfWeek = '$wDay' AND 
+            StartTime = '$time'";
     if ($mysqli->query($sql)) {
         $response = ['success' => true, 'message' => 'Appointment made successfully.'];
         header('Content-Type: application/json');

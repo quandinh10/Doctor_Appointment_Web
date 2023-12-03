@@ -40,9 +40,11 @@ if ($mysqli->query($sql) === TRUE) {
 // Create table "slot"
 $sql = "CREATE TABLE IF NOT EXISTS slot (
     slotID INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    Year INT(4),
+    Month INT(2) CHECK (Month BETWEEN 1 AND 12),
+    Day INT(2) CHECK (Day BETWEEN 1 AND 31), 
     DayofWeek ENUM('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'),
     StartTime TIME,
-    EndTime TIME,
     statusSlot ENUM('available','busy') DEFAULT 'available',
     patientID CHAR(10) DEFAULT NULL
 )";
