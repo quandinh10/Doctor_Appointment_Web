@@ -1,19 +1,23 @@
 <?php
 // Create a connection
-$mysqli = new mysqli("localhost", "root", "", "");
+$db_config = include('./DB_config/dbConfig.php');
+$host = $db_config["host"];
+$username = $db_config["username"];
+$password = $db_config["password"];
+$mysqli = new mysqli($host, $username, $password, "medicalDoctor");
 
 // Check connection
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
 
-// Create database "OnlineStore"
-$sql = "CREATE DATABASE IF NOT EXISTS medicalDoctor";
-if ($mysqli->query($sql) === TRUE) {
-    echo "Database created successfully <br>";
-} else {
-    echo "Error creating database: " . $mysqli->error;
-}
+// // Create database "OnlineStore"
+// $sql = "CREATE DATABASE IF NOT EXISTS medicalDoctor";
+// if ($mysqli->query($sql) === TRUE) {
+//     echo "Database created successfully <br>";
+// } else {
+//     echo "Error creating database: " . $mysqli->error;
+// }
 
 // Select the database
 $mysqli->select_db("medicalDoctor");

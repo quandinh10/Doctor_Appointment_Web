@@ -1,6 +1,6 @@
 <?php
 // Create a connection
-$mysqli = new mysqli("localhost", "root", "", "medicalDoctor");
+$mysqli = new mysqli("localhost", "root", "123", "medicalDoctor");
 
 // Check connection
 if ($mysqli->connect_error) {
