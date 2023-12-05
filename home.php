@@ -63,11 +63,10 @@
                     xhttp.send(JSON.stringify({
                         "year": year,
                         "month": month,
-                        "day": day ,
+                        "day": day,
                         "weekday": weekday,
                         "time": time,
                     }));
-
                 }
             </script>
 </section>
