@@ -5,6 +5,39 @@
     <table class="table table-bordered overflow-auto">
         <thead>
             <tr>
+                <th scope="col" class="day-col">9:00</th>
+                <th scope="col" class="day-col">9:30</th>
+                <th scope="col" class="day-col">10:00</th>
+                <th scope="col" class="day-col">10:30</th>
+                <th scope="col" class="day-col">11:00</th>
+                <th scope="col" class="day-col">11:30</th>
+                <th scope="col" class="day-col">12:00</th>
+                <th scope="col" class="day-col">12:30</th>
+                <th scope="col" class="day-col">13:00</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+        <thead>
+            <tr>
+                <th scope="col" class="day-col">14:00</th>
+                <th scope="col" class="day-col">14:30</th>
+                <th scope="col" class="day-col">15:00</th>
+                <th scope="col" class="day-col">15:30</th>
+                <th scope="col" class="day-col">16:00</th>
+                <th scope="col" class="day-col">16:30</th>
+                <th scope="col" class="day-col">17:00</th>
+                <th scope="col" class="day-col">17:30</th>
+                <th scope="col" class="day-col">18:00</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <!-- <table class="table table-bordered overflow-auto">
+        <thead>
+            <tr>
                 <th scope="col" class="time-col">Time</th>
                 <th scope="col" class="day-col">Monday</th>
                 <th scope="col" class="day-col">Tuesday</th>
@@ -71,7 +104,7 @@
             }
             ?>
         </tbody>
-    </table>
+    </table> -->
     <script>
         function getCookie(name) {
             const value = `; ${document.cookie}`;
