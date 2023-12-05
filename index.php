@@ -40,6 +40,7 @@ $imagePaths = [
   <script src="calendar/js/bootstrap.min.js"></script>
   <!-- <script src="calendar/js/main.js"></script> -->
   <script src="calendar/js/custom.js"></script>
+  <!-- <script src="save_status.js"></script> -->
   <style>
     .container-fluid.container {
       position: relative;
