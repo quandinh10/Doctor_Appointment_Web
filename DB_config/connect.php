@@ -1,6 +1,10 @@
 <?php
+$db_config = include_once("./db_config.php");
+$host = $db_config["host"];
+$username = $db_config["username"];
+$password = $db_config["password"];
 // Create a connection
-$mysqli = new mysqli("localhost", "root", "", "");
+$mysqli = new mysqli($host, $username, $password, "");
 
 // Check connection
 if ($mysqli->connect_error) {
@@ -39,14 +43,12 @@ if ($mysqli->query($sql) === TRUE) {
 
 // Create table "slot"
 $sql = "CREATE TABLE IF NOT EXISTS slot (
-    slotID INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    Year INT(4),
-    Month INT(2) CHECK (Month BETWEEN 1 AND 12),
-    Day INT(2) CHECK (Day BETWEEN 1 AND 31), 
+    SlotID INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    Date DATE, 
     DayofWeek ENUM('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'),
-    StartTime TIME,
-    statusSlot ENUM('available','busy') DEFAULT 'available',
-    patientID CHAR(10) DEFAULT NULL
+    TimeSlot TIME,
+    Status ENUM('available','busy') DEFAULT 'available',
+    PatientID CHAR(10) DEFAULT NULL
 )";
 
 if ($mysqli->query($sql) === TRUE) {
