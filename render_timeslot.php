@@ -38,7 +38,7 @@ if (isset($_POST["date"])) {
         $color = ($status_str == 'available') ? '#66ff66' : (($status_str == 'busy') ? '#ff6633' : '');
         $html .= '
         <td>
-            <button type="button" style="font-weight: 500; background-color:' . $color . '; color: \'black\';"  class="btn btn-light btn-value" data-bs-toggle="modal" data-bs-target="#statusModal">' . ucfirst($status_str) . '</button>
+            <button type="button" style="font-weight: 500; background-color:' . $color . '; color: \'black\';"  class="btn btn-light btn-value-1" data-bs-toggle="modal" data-bs-target="#statusModal">' . ucfirst($status_str) . '</button>
         </td>';
         $current_time += $interval;
     }
@@ -69,7 +69,7 @@ if (isset($_POST["date"])) {
         $color = ($status_str == 'available') ? '#66ff66' : (($status_str == 'busy') ? '#ff6633' : '');
         $html .= '
         <td>
-            <button type="button" style="font-weight: 500; background-color:' . $color . '; color: \'black\';"  class="btn btn-light btn-value" data-bs-toggle="modal" data-bs-target="#statusModal">' . ucfirst($status_str) . '</button>
+            <button type="button" style="font-weight: 500; background-color:' . $color . '; color: \'black\';"  class="btn btn-light btn-value-2" data-bs-toggle="modal" data-bs-target="#statusModal">' . ucfirst($status_str) . '</button>
         </td>';
         $current_time += $interval;
     }
@@ -102,7 +102,16 @@ if (isset($_POST["date"])) {
 
 <script>
     $(document).ready(function() {
-        $('.btn-value').click(function() {
+        $('.btn-value-1').click(function() {
+            var timeSlot = $(this).closest('table').find('thead').eq(0).find('th').eq($(this).closest('td').index()).text();
+            if ($(this).text() === "Available") {
+                $('#status-select').val('available');
+            } else if ($(this).text() === "Busy") {
+                $('#status-select').val('busy');
+            }
+            document.getElementById("status-modal-title").innerHTML = `${timeSlot}`;
+        });
+        $('.btn-value-2').click(function() {
             var timeSlot = $(this).closest('table').find('thead').eq(1).find('th').eq($(this).closest('td').index()).text();
             if ($(this).text() === "Available") {
                 $('#status-select').val('available');
