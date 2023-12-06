@@ -79,9 +79,6 @@ if(isset($_SESSION['loginSuccess']) && $_SESSION['loginSuccess'])
         echo $html;
     }
 }
-else {
-    header("Location: index.php?page=login");
-}
 ?>
 <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModal" aria-hidden="true">
     <div class="modal-dialog">
@@ -99,12 +96,15 @@ else {
                             <option selected>Choose status</option>
                             <option value="available">Available</option>
                             <option value="busy">Busy</option>
+                            <option value="cancel">Cancel appoinment</option>
+
                         </select>
                     <?php elseif ($_SESSION['role'] === 'patient'): ?>
                         <!-- Content for patient role -->
                         <select class="form-select" id="status-select" aria-label="Default select example">
                             <option selected>Choose status</option>
                             <option value="busy">Make appointment</option>
+                            <option value="cancel">Cancel appoinment</option>
                         </select>
                     <?php else: ?>
                         <!-- Default content for other roles -->
@@ -128,8 +128,10 @@ else {
                 $('#status-select').val('available');
             } else if ($(this).text() === "Busy") {
                 $('#status-select').val('busy');
-            } else {
+            } else if ($(this).text() === "Make appointment"){
                 $('#status-select').val('busy');
+            } else if ($(this).text() === "Cancel appoinment") {
+                $('#status-select').val('cancel');
             }
             document.getElementById("status-modal-title").innerHTML = `${timeSlot}`;
         });
@@ -141,6 +143,8 @@ else {
                 $('#status-select').val('busy');
             } else if ($(this).text() === "Make appointment"){
                 $('#status-select').val('busy');
+            } else if ($(this).text() === "Cancel appoinment") {
+                $('#status-select').val('cancel');
             }
             document.getElementById("status-modal-title").innerHTML = `${timeSlot}`;
         });
@@ -181,8 +185,8 @@ else {
             },
 
             success: function(response) {
+                alert(response.message);
                 $('#statusModal').modal('hide');
-                console.log('update success')
                 jQuery.ajax({
                     type: "POST",
                     url: "render_timeslot.php",
@@ -191,13 +195,14 @@ else {
                     },
 
                     success: function(response) {
-                        console.log('render success')
                         $('#slot-render').html(response);
                     },
                     error: function(xhr, status, error) {
                         console.log(error);
                     }
+                
                 });
+                
             },
             error: function(xhr, status, error) {
                 console.log(error);

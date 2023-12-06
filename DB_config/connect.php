@@ -48,7 +48,7 @@ $sql = "CREATE TABLE IF NOT EXISTS slot (
     DayofWeek ENUM('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'),
     TimeSlot TIME,
     Status ENUM('available','busy') DEFAULT 'available',
-    PatientID CHAR(10) DEFAULT NULL
+    PatientID CHAR(15) DEFAULT NULL
 )";
 
 if ($mysqli->query($sql) === TRUE) {
