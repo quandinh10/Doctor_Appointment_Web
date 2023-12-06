@@ -30,7 +30,7 @@ $sql = "CREATE TABLE IF NOT EXISTS user (
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     ID CHAR(15) GENERATED ALWAYS AS (CONCAT('UID', LPAD(userID,8,'0'))),
-    availableSlot ENUM('0', '1', '2'),
+    availableSlot INT(11),
     role ENUM('patient', 'doctor')
 )";
 

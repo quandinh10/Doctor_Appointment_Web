@@ -33,13 +33,12 @@ else{
     else { 
         if(($password == $repass)) { 
     
-            $hash = password_hash($password,    
-                                PASSWORD_DEFAULT); 
+            $hash = password_hash($password, PASSWORD_DEFAULT); 
                 
             // Password Hashing is used here.  
             $sql = "INSERT INTO `user` ( `firstname`, `lastname`,  
                 `email`, `password`, `availableSlot` , `role`) VALUES ('$firstname', '$lastname',  
-                '$email', '$hash', '2', 'patient')"; 
+                '$email', '$hash', 2, 'patient')"; 
     
             $result = mysqli_query($mysqli, $sql); 
     

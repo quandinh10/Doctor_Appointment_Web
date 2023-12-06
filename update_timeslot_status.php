@@ -33,11 +33,18 @@ if (isset($_POST["date"]) && isset($_POST["day"]) && isset($_POST["status"]) && 
             } else {
                 $check_slot_sql = "SELECT availableSlot FROM user WHERE ID = '$id'";
                 $query_res = $mysqli->query($check_slot_sql);
-                if ($query_res)
-                {
-                    $query_row = $query_res->fetch_assoc();
-                    if ($row['available'] == 0){
-                        $response = ['success' => false, 'message' => 'Out of available slot for patient '. $id . $mysqli->error];
+                $query_row = $query_res->fetch_assoc();
+                if ($query_row['availableSlot'] == 0 || $query_row['availableSlot'] == '0'){
+                    $response = ['success' => true, 'message' => 'Out of available slot for patient '. $id . $mysqli->error];
+                    header('Content-Type: application/json');
+                    echo json_encode($response);
+                } else {
+                    $check_timeslot_status_sql = "SELECT Status FROM slot where SlotID = $slotid";
+                    $query_timeslot_res = $mysqli->query($check_timeslot_status_sql);
+                    $query_timeslot_row = $query_timeslot_res->fetch_assoc();
+                    if($query_timeslot_row['Status'] === 'busy')
+                    {
+                        $response = ['success' => true, 'message' => 'Timeslot status updated successfully (server)'];
                         header('Content-Type: application/json');
                         echo json_encode($response);
                     } else {
@@ -53,13 +60,10 @@ if (isset($_POST["date"]) && isset($_POST["day"]) && isset($_POST["status"]) && 
                             echo json_encode($response);
                         }
                     }
-                } else {
-                    $response = ['success' => false, 'message' => 'Error updating timeslot status (server) ' . $mysqli->error];
-                    header('Content-Type: application/json');
-                    echo json_encode($response);
                 }
             }
-    } else {
+        }
+    } elseif($role === "doctor") {
         $insert_sql = "INSERT INTO slot (Date, DayofWeek, TimeSlot, Status) VALUES ('$date', '$day', '$timeslot', '$status')";
         if ($mysqli->query($insert_sql)) {
             $response = ['success' => true, 'message' => 'Timeslot status creating successfully (server)'];
@@ -70,5 +74,9 @@ if (isset($_POST["date"]) && isset($_POST["day"]) && isset($_POST["status"]) && 
             header('Content-Type: application/json');
             echo json_encode($response);
         }
+    } else {
+        $response = ['success' => true, 'message' => 'Only docter can create calendar'];
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
 }
