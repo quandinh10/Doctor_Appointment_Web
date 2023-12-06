@@ -1,79 +1,86 @@
 <?php
 require_once 'config.php';
+require_once 'session.php';
 // header('Content-Type: application/json');
-if (isset($_POST["date"])) {
-    $date = $_POST["date"];
-    $query = "SELECT TIME_FORMAT(TimeSLot, '%H:%i') AS FormatedTimeSlot, Status FROM slot WHERE Date = '{$date}'";
-    $res = $mysqli->query($query);
-
-    $slot_available = array();
-    if ($res->num_rows > 0) {
-        while ($row = $res->fetch_assoc()) {
-            $slot_available[$row["FormatedTimeSlot"]] = $row["Status"];
+if(isset($_SESSION['loginSuccess']) && $_SESSION['loginSuccess'])
+{
+    if (isset($_POST["date"])) {
+        $date = $_POST["date"];
+        $query = "SELECT TIME_FORMAT(TimeSLot, '%H:%i') AS FormatedTimeSlot, Status FROM slot WHERE Date = '{$date}'";
+        $res = $mysqli->query($query);
+    
+        $slot_available = array();
+        if ($res->num_rows > 0) {
+            while ($row = $res->fetch_assoc()) {
+                $slot_available[$row["FormatedTimeSlot"]] = $row["Status"];
+            }
         }
+        $html = '<table class="table table-bordered overflow-auto">
+        <thead>
+            <tr>
+                <th scope="col" class="day-col">09:00</th>
+                <th scope="col" class="day-col">09:30</th>
+                <th scope="col" class="day-col">10:00</th>
+                <th scope="col" class="day-col">10:30</th>
+                <th scope="col" class="day-col">11:00</th>
+                <th scope="col" class="day-col">11:30</th>
+                <th scope="col" class="day-col">12:00</th>
+                <th scope="col" class="day-col">12:30</th>
+                <th scope="col" class="day-col">13:00</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>';
+        $start_time = strtotime("09:00");
+        $end_time = strtotime("13:30");
+        $interval = 30 * 60;
+        $current_time = $start_time;
+        while ($current_time < $end_time) {
+            $start_time_formatted = date('H:i', $current_time);
+            $status_str = isset($slot_available[$start_time_formatted]) ? $slot_available[$start_time_formatted] : 'Empty';
+            $color = ($status_str == 'available') ? '#66ff66' : (($status_str == 'busy') ? '#ff6633' : '');
+            $html .= '
+            <td>
+                <button type="button" style="font-weight: 500; background-color:' . $color . '; color: \'black\';"  class="btn btn-light btn-value-1" data-bs-toggle="modal" data-bs-target="#statusModal">' . ucfirst($status_str) . '</button>
+            </td>';
+            $current_time += $interval;
+        }
+        $html .= '</tr>
+        </tbody>
+        <thead>
+            <tr>
+                <th scope="col" class="day-col">13:30</th>
+                <th scope="col" class="day-col">14:00</th>
+                <th scope="col" class="day-col">14:30</th>
+                <th scope="col" class="day-col">15:00</th>
+                <th scope="col" class="day-col">15:30</th>
+                <th scope="col" class="day-col">16:00</th>
+                <th scope="col" class="day-col">16:30</th>
+                <th scope="col" class="day-col">17:00</th>
+                <th scope="col" class="day-col">17:30</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>';
+        $start_time = strtotime("13:30");
+        $end_time = strtotime("18:00");
+        $interval = 30 * 60;
+        $current_time = $start_time;
+        while ($current_time < $end_time) {
+            $start_time_formatted = date('H:i', $current_time);
+            $status_str = isset($slot_available[$start_time_formatted]) ? $slot_available[$start_time_formatted] : 'Empty';
+            $color = ($status_str == 'available') ? '#66ff66' : (($status_str == 'busy') ? '#ff6633' : '');
+            $html .= '
+            <td>
+                <button type="button" style="font-weight: 500; background-color:' . $color . '; color: \'black\';"  class="btn btn-light btn-value-2" data-bs-toggle="modal" data-bs-target="#statusModal">' . ucfirst($status_str) . '</button>
+            </td>';
+            $current_time += $interval;
+        }
+        echo $html;
     }
-    $html = '<table class="table table-bordered overflow-auto">
-    <thead>
-        <tr>
-            <th scope="col" class="day-col">09:00</th>
-            <th scope="col" class="day-col">09:30</th>
-            <th scope="col" class="day-col">10:00</th>
-            <th scope="col" class="day-col">10:30</th>
-            <th scope="col" class="day-col">11:00</th>
-            <th scope="col" class="day-col">11:30</th>
-            <th scope="col" class="day-col">12:00</th>
-            <th scope="col" class="day-col">12:30</th>
-            <th scope="col" class="day-col">13:00</th>
-        </tr>
-    </thead>
-    <tbody>
-    <tr>';
-    $start_time = strtotime("09:00");
-    $end_time = strtotime("13:30");
-    $interval = 30 * 60;
-    $current_time = $start_time;
-    while ($current_time < $end_time) {
-        $start_time_formatted = date('H:i', $current_time);
-        $status_str = isset($slot_available[$start_time_formatted]) ? $slot_available[$start_time_formatted] : 'Empty';
-        $color = ($status_str == 'available') ? '#66ff66' : (($status_str == 'busy') ? '#ff6633' : '');
-        $html .= '
-        <td>
-            <button type="button" style="font-weight: 500; background-color:' . $color . '; color: \'black\';"  class="btn btn-light btn-value-1" data-bs-toggle="modal" data-bs-target="#statusModal">' . ucfirst($status_str) . '</button>
-        </td>';
-        $current_time += $interval;
-    }
-    $html .= '</tr>
-    </tbody>
-    <thead>
-        <tr>
-            <th scope="col" class="day-col">13:30</th>
-            <th scope="col" class="day-col">14:00</th>
-            <th scope="col" class="day-col">14:30</th>
-            <th scope="col" class="day-col">15:00</th>
-            <th scope="col" class="day-col">15:30</th>
-            <th scope="col" class="day-col">16:00</th>
-            <th scope="col" class="day-col">16:30</th>
-            <th scope="col" class="day-col">17:00</th>
-            <th scope="col" class="day-col">17:30</th>
-        </tr>
-    </thead>
-    <tbody>
-    <tr>';
-    $start_time = strtotime("13:30");
-    $end_time = strtotime("18:00");
-    $interval = 30 * 60;
-    $current_time = $start_time;
-    while ($current_time < $end_time) {
-        $start_time_formatted = date('H:i', $current_time);
-        $status_str = isset($slot_available[$start_time_formatted]) ? $slot_available[$start_time_formatted] : 'Empty';
-        $color = ($status_str == 'available') ? '#66ff66' : (($status_str == 'busy') ? '#ff6633' : '');
-        $html .= '
-        <td>
-            <button type="button" style="font-weight: 500; background-color:' . $color . '; color: \'black\';"  class="btn btn-light btn-value-2" data-bs-toggle="modal" data-bs-target="#statusModal">' . ucfirst($status_str) . '</button>
-        </td>';
-        $current_time += $interval;
-    }
-    echo $html;
+}
+else {
+    header("Location: index.php?page=login");
 }
 ?>
 <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModal" aria-hidden="true">
@@ -121,8 +128,9 @@ if (isset($_POST["date"])) {
             document.getElementById("status-modal-title").innerHTML = `${timeSlot}`;
         });
     });
-
     function handleSaveStatus() {
+        let role = '<?php echo $_SESSION['role']; ?>';
+        let id = '<?php echo $_SESSION['ID']; ?>';
         let selectedDay = new Date(getCookie("selected_day"));
         let year = selectedDay.getFullYear();
         let month = ('0' + (selectedDay.getMonth() + 1)).slice(-2);
@@ -135,16 +143,22 @@ if (isset($_POST["date"])) {
             alert("Missing required field status!");
             return;
         }
-
+        if (role === 'patient' && status == 'Busy')
+        {
+            alert("Doctor is busy in this day!")
+            return;
+        }
         $('#status-select').val('Choose status');
         jQuery.ajax({
             type: "POST",
-            url: "update_timeslot_status.php",
+            url: "update_timeslot_status.php",  
             dataType: "json",
             data: {
                 date: combineDate,
                 day: day,
                 timeslot: timeslot,
+                id: id,
+                role: role,
                 status: status
             },
 

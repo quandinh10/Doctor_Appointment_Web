@@ -15,7 +15,6 @@ $stmt = $mysqli->prepare($sql);
 $stmt->bind_param('s', $email);
 $stmt->execute();
 $result = $stmt->get_result();
-
 // Check if the user exists and if the password is correct
 if ($row = $result->fetch_assoc()) {
     $_SESSION['email'] = $row['email'];
