@@ -115,9 +115,10 @@ $imagePaths = [
     } else {
       echo "Page not found";
     }
-  } else {
-    include('home.php');
   }
+  // } else {
+  //   include('home.php');
+  // }
   ?>
 </body>
 

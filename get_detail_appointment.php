@@ -35,16 +35,20 @@ if (isset($_POST["date"]) && isset($_POST["day"]) && isset($_POST["timeslot"])) 
                 $prev_date = $row["Date"];
                 $prev_day = $row["DayofWeek"];
                 $prev_timeslot = $row["FormatedTimeSlot"];
-                $html .= "<p style=\"font-weight: 400; color: black; \">You have already booked an appointment on <strong>$prev_date $prev_day</strong> at <strong>$prev_timeslot</strong></p>";
-                $html .= '<div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="handleChangeAppointment('. "'$prev_date', '$prev_day', '$prev_timeslot', '$date', '$day', '$timeslot'" .')">Change Appointment</button>
+                if (isset($_POST["current"])) {
+                    $html .= "<p style=\"font-weight: 400; color: black; \">Your current an appointment is on <strong>$prev_date $prev_day</strong> at <strong>$prev_timeslot</strong></p>";
+                } else {
+                    $html .= "<p style=\"font-weight: 400; color: black; \">You have already booked an appointment on <strong>$prev_date $prev_day</strong> at <strong>$prev_timeslot</strong></p>";
+                    $html .= '<div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="handleChangeAppointment(' . "'$prev_date', '$prev_day', '$prev_timeslot', '$date', '$day', '$timeslot'" . ')">Change Appointment</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>';
+                }
             }
         } else {
             $html .= "<p style=\"font-weight: 400; color: black; \">You are booking an appointment on <strong>$date $day</strong> at <strong>$timeslot</strong></p>";
             $html .= '<div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="handleConfirmAppointment('. "'$date', '$day', '$timeslot'" .')">Confirm Appointment</button>
+                    <button type="button" class="btn btn-primary" onclick="handleConfirmAppointment(' . "'$date', '$day', '$timeslot'" . ')">Confirm Appointment</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>';
         }

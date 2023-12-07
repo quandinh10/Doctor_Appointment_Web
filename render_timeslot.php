@@ -2,6 +2,17 @@
 require_once 'config.php';
 require_once 'session.php';
 // header('Content-Type: application/json');
+$patientID = $_SESSION["ID"];
+$query = "SELECT Date, DayofWeek, TIME_FORMAT(TimeSLot, '%H:%i') AS FormatedTimeSlot FROM slot WHERE PatientID = '{$patientID}'";
+$res = $mysqli->query($query);
+if ($res->num_rows > 0) {
+    if ($row = $res->fetch_assoc()) {
+        $prev_date = $row["Date"];
+        $prev_day = $row["DayofWeek"];
+        $prev_timeslot = $row["FormatedTimeSlot"];
+        echo "<p style=\"font-weight: 400; color: black; \">Your current an appointment is on <strong>$prev_date $prev_day</strong> at <strong>$prev_timeslot</strong></p>";
+    }
+}
 if (isset($_POST["date"])) {
     $role = $_SESSION["role"];
     $userID = $_SESSION["ID"];
