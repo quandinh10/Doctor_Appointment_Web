@@ -90,7 +90,7 @@ $imagePaths = [
                             <img src="' . $randomImage . '" alt="Your Image">
                           </div>
                         </div>
-                        <div class="col col-1" style="width: 200px;">
+                        <div class="col ms-3" style="width: 200px;">
                           <span style="color: antiquewhite">' . $ID . '</span>
                           <p class="my-0" style="color: antiquewhite">Role: ' . $role . '</p>
                         </div>
