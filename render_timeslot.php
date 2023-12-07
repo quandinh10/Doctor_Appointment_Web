@@ -2,14 +2,16 @@
 require_once 'config.php';
 // header('Content-Type: application/json');
 if (isset($_POST["date"])) {
+    $role = $_SESSION["role"];
+    $userID = $_SESSION["ID"];
     $date = $_POST["date"];
-    $query = "SELECT TIME_FORMAT(TimeSLot, '%H:%i') AS FormatedTimeSlot, Status FROM slot WHERE Date = '{$date}'";
+    $query = "SELECT TIME_FORMAT(TimeSLot, '%H:%i') AS FormatedTimeSlot, Status, PatientID FROM slot WHERE Date = '{$date}'";
     $res = $mysqli->query($query);
 
     $slot_available = array();
     if ($res->num_rows > 0) {
         while ($row = $res->fetch_assoc()) {
-            $slot_available[$row["FormatedTimeSlot"]] = $row["Status"];
+            $slot_available[$row["FormatedTimeSlot"]] = ["Status" => $row["Status"], "PatientID" => $row["PatientID"]];
         }
     }
     $html = '<table class="table table-bordered overflow-auto">
@@ -34,11 +36,22 @@ if (isset($_POST["date"])) {
     $current_time = $start_time;
     while ($current_time < $end_time) {
         $start_time_formatted = date('H:i', $current_time);
-        $status_str = isset($slot_available[$start_time_formatted]) ? $slot_available[$start_time_formatted] : 'Empty';
-        $color = ($status_str == 'available') ? '#66ff66' : (($status_str == 'busy') ? '#ff6633' : '');
-        $html .= '
-        <td>
-            <button type="button" style="font-weight: 500; background-color:' . $color . '; color: \'black\';"  class="btn btn-light btn-value-1" data-bs-toggle="modal" data-bs-target="#statusModal">' . ucfirst($status_str) . '</button>
+        $status_str = 'Empty';
+        $color = '';
+        if ($role == 'doctor') {
+            $status_str = isset($slot_available[$start_time_formatted]) ? $slot_available[$start_time_formatted]["Status"] : 'empty';
+            $color = ($status_str == 'available') ? '#66ff66' : (($status_str == 'busy') ? '#ff6633' : (($status_str == 'appointment') ? 'yellow' : ''));
+            $html .= '<td>
+                <button type="button" style="font-weight: 500; background-color:' . $color . '; color: \'black\';"  class="btn btn-light btn-value-1" data-bs-toggle="modal" data-bs-target="#statusModal">' . ucfirst($status_str) . '</button>
+            </td>';
+        } else if ($role == 'patient') {
+            $status_str = isset($slot_available[$start_time_formatted]) ? $slot_available[$start_time_formatted]["Status"] : 'empty';
+            $status_str = ($status_str == "appointment" && $userID != $slot_available[$start_time_formatted]["PatientID"]) ? "busy" : "appointment";
+            $color = ($status_str == 'available') ? '#66ff66' : (($status_str == 'busy') ? '#ff6633' : (($status_str == 'appointment') ? 'yellow' : ''));
+        }
+
+        $html .= '<td>
+            <button' . (($role == 'patient' && $status_str != 'available') ? 'disabled' : ' ') . 'type="button" style="font-weight: 500; background-color:' . $color . '; color: \'black\';"  class="btn btn-light btn-value-1" data-bs-toggle="modal" data-bs-target="#statusModal">' . ucfirst($status_str) . '</button>
         </td>';
         $current_time += $interval;
     }
@@ -65,8 +78,16 @@ if (isset($_POST["date"])) {
     $current_time = $start_time;
     while ($current_time < $end_time) {
         $start_time_formatted = date('H:i', $current_time);
-        $status_str = isset($slot_available[$start_time_formatted]) ? $slot_available[$start_time_formatted] : 'Empty';
-        $color = ($status_str == 'available') ? '#66ff66' : (($status_str == 'busy') ? '#ff6633' : '');
+        $status_str = 'Empty';
+        $color = '';
+        if ($role == 'doctor') {
+            $status_str = isset($slot_available[$start_time_formatted]) ? $slot_available[$start_time_formatted]["Status"] : 'Empty';
+            $color = ($status_str == 'available') ? '#66ff66' : (($status_str == 'busy') ? '#ff6633' : (($status_str == 'appointment') ? 'yellow' : ''));
+        } else if ($role == 'patient') {
+            $status_str = isset($slot_available[$start_time_formatted]) ? $slot_available[$start_time_formatted]["Status"] : 'Empty';
+            $status_str = ($status_str == "appointment" && $userID != $slot_available[$start_time_formatted]["PatientID"]) ? "busy" : "appointment";
+            $color = ($status_str == 'available') ? '#66ff66' : (($status_str == 'busy') ? '#ff6633' : (($status_str == 'appointment') ? 'yellow' : ''));
+        }
         $html .= '
         <td>
             <button type="button" style="font-weight: 500; background-color:' . $color . '; color: \'black\';"  class="btn btn-light btn-value-2" data-bs-toggle="modal" data-bs-target="#statusModal">' . ucfirst($status_str) . '</button>
@@ -81,7 +102,30 @@ if (isset($_POST["date"])) {
         <div class="modal-content">
             <form>
                 <div class="modal-header">
-                    <h5 class="modal-title" id="status-modal-title"></h5>
+                    <h5 class="modal-title" id="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select class="form-select" id="status-select" aria-label="Default select example">
+                        <option selected>Choose status</option>
+                        <option value="available">Available</option>
+                        <option value="busy">Busy</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="handleSaveStatus()">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="appoinment-modal" tabindex="-1" aria-labelledby="appoinment-modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-title"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -109,7 +153,7 @@ if (isset($_POST["date"])) {
             } else if ($(this).text() === "Busy") {
                 $('#status-select').val('busy');
             }
-            document.getElementById("status-modal-title").innerHTML = `${timeSlot}`;
+            document.getElementById("modal-title").innerHTML = `${timeSlot}`;
         });
         $('.btn-value-2').click(function() {
             var timeSlot = $(this).closest('table').find('thead').eq(1).find('th').eq($(this).closest('td').index()).text();
@@ -118,7 +162,7 @@ if (isset($_POST["date"])) {
             } else if ($(this).text() === "Busy") {
                 $('#status-select').val('busy');
             }
-            document.getElementById("status-modal-title").innerHTML = `${timeSlot}`;
+            document.getElementById("modal-title").innerHTML = `${timeSlot}`;
         });
     });
 
