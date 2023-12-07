@@ -30,7 +30,7 @@ $sql = "CREATE TABLE IF NOT EXISTS user (
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     ID CHAR(15) GENERATED ALWAYS AS (CONCAT('UID', LPAD(userID,8,'0'))),
-    availableSlot ENUM('0', '1', '2'),
+    availableSlot INT(11),
     role ENUM('patient', 'doctor')
 )";
 
@@ -48,7 +48,7 @@ $sql = "CREATE TABLE IF NOT EXISTS slot (
     DayofWeek ENUM('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'),
     TimeSlot TIME,
     Status ENUM('available','busy') DEFAULT 'available',
-    PatientID CHAR(10) DEFAULT NULL
+    PatientID CHAR(15) DEFAULT NULL
 )";
 
 if ($mysqli->query($sql) === TRUE) {
