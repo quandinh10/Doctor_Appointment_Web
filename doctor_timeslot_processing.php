@@ -1,7 +1,8 @@
 <?php
 require_once 'config.php';
 header('Content-Type: application/json');
-if (isset($_POST["date"]) && isset($_POST["day"]) && isset($_POST["status"]) && isset($_POST["timeslot"])) {
+$isDoctor = $_SESSION["role"] == 'doctor';
+if (isset($isDoctor) && isset($_POST["date"]) && isset($_POST["day"]) && isset($_POST["status"]) && isset($_POST["timeslot"])) {
     $date = $_POST["date"];
     $day = $_POST["day"];
     $timeslot = $_POST["timeslot"];
@@ -17,24 +18,28 @@ if (isset($_POST["date"]) && isset($_POST["day"]) && isset($_POST["status"]) && 
             $id = $row["SlotID"];
             $update_sql = "UPDATE slot SET Status = '$status' WHERE SlotID = $id";
             if ($mysqli->query($update_sql)) {
-                $response = ['success' => true, 'message' => 'Timeslot status updated successfully (server)'];
+                $response = ['message' => 'Timeslot status updated successfully'];
                 header('Content-Type: application/json');
+                http_response_code(200);
                 echo json_encode($response);
             } else {
-                $response = ['success' => false, 'message' => 'Error updating timeslot status (server) ' . $mysqli->error];
+                $response = ['message' => 'Error updating timeslot status: ' . $mysqli->error];
                 header('Content-Type: application/json');
+                http_response_code(400);
                 echo json_encode($response);
             }
         }
     } else {
         $insert_sql = "INSERT INTO slot (Date, DayofWeek, TimeSlot, Status) VALUES ('$date', '$day', '$timeslot', '$status')";
         if ($mysqli->query($insert_sql)) {
-            $response = ['success' => true, 'message' => 'Timeslot status creating successfully (server)'];
+            $response = ['message' => 'Timeslot status creating successfully'];
             header('Content-Type: application/json');
+            http_response_code(201);
             echo json_encode($response);
         } else {
-            $response = ['success' => false, 'message' => 'Error creating timeslot status (server) ' . $mysqli->error];
+            $response = ['message' => 'Error creating timeslot status: ' . $mysqli->error];
             header('Content-Type: application/json');
+            http_response_code(400);
             echo json_encode($response);
         }
     }

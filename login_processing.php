@@ -18,12 +18,11 @@ $result = $stmt->get_result();
 
 // Check if the user exists and if the password is correct
 if ($row = $result->fetch_assoc()) {
-    $_SESSION['email'] = $row['email'];
-    if (password_verify($password, $row['password'])) {
+    $_SESSION['email'] = $row['Email'];
+    if (password_verify($password, $row['Password'])) {
         // Assign values to session variables
-        $_SESSION['ID'] = $row['ID'];
-        $_SESSION['role'] = $row['role'];
-        $_SESSION['availableSlot'] = $row['availableSlot'];
+        $_SESSION['ID'] = $row['UserID'];
+        $_SESSION['role'] = $row['Role'];
         // Redirect to the dashboard
         header("Location: index.php?page=home");
         $_SESSION['loginSuccess'] = true;

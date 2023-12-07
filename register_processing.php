@@ -22,7 +22,7 @@ if (empty($firstname) || empty($lastname) || empty($email) || empty($password) |
     header('Location: index.php?page=register');   
 }
 else{
-    $sql = "SELECT * from user where email = '$email'";
+    $sql = "SELECT * from user where Email = '$email'";
     $result = mysqli_query($mysqli,$sql);
     $num = mysqli_num_rows($result); 
     if($num>0)  
@@ -37,9 +37,9 @@ else{
                                 PASSWORD_DEFAULT); 
                 
             // Password Hashing is used here.  
-            $sql = "INSERT INTO `user` ( `firstname`, `lastname`,  
-                `email`, `password`, `availableSlot` , `role`) VALUES ('$firstname', '$lastname',  
-                '$email', '$hash', '2', 'patient')"; 
+            $sql = "INSERT INTO `user` ( `Firstname`, `Lastname`,  
+                `Email`, `Password`, `Role`) VALUES ('$firstname', '$lastname',  
+                '$email', '$hash', 'patient')"; 
     
             $result = mysqli_query($mysqli, $sql); 
     

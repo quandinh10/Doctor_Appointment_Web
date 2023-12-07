@@ -139,7 +139,7 @@ if (isset($_POST["date"])) {
         $('#status-select').val('Choose status');
         jQuery.ajax({
             type: "POST",
-            url: "update_timeslot_status.php",
+            url: "doctor_timeslot_processing.php",
             dataType: "json",
             data: {
                 date: combineDate,
