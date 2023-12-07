@@ -2,7 +2,7 @@
 return [
     "host" => "localhost",
     "username" => "root",
-    "password" => "123"
+    "password" => ""
 ]
 
 ?>

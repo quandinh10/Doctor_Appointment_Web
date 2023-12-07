@@ -12,7 +12,7 @@ if ($mysqli->connect_error) {
 }
 
 $hashed_password_new_user = password_hash('superdoctor123', PASSWORD_DEFAULT);
-$product_sql = "INSERT INTO user (firstname, lastname, email, password, availableSlot, role) VALUES ('user', 'new', 'abc@gmail.com', '$hashed_password_new_user','0','doctor')";
+$product_sql = "INSERT INTO user (firstname, lastname, email, password, availableSlot, role) VALUES ('user', 'new', 'abc@gmail.com', '$hashed_password_new_user', 0,'doctor')";
 if ($mysqli->query($product_sql) === TRUE) {
     echo "New doctor inserted successfully.<br>";
 } else {

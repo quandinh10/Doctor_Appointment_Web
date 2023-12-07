@@ -79,9 +79,6 @@ if(isset($_SESSION['loginSuccess']) && $_SESSION['loginSuccess'])
         echo $html;
     }
 }
-else {
-    header("Location: index.php?page=login");
-}
 ?>
 <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModal" aria-hidden="true">
     <div class="modal-dialog">
@@ -92,11 +89,27 @@ else {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <select class="form-select" id="status-select" aria-label="Default select example">
-                        <option selected>Choose status</option>
-                        <option value="available">Available</option>
-                        <option value="busy">Busy</option>
-                    </select>
+                    <!-- Conditional content based on user role -->
+                    <?php if ($_SESSION['role'] === 'doctor'): ?>
+                        <!-- Content for doctor role -->
+                        <select class="form-select" id="status-select" aria-label="Default select example">
+                            <option selected>Choose status</option>
+                            <option value="available">Available</option>
+                            <option value="busy">Busy</option>
+                            <option value="cancel">Cancel appoinment</option>
+
+                        </select>
+                    <?php elseif ($_SESSION['role'] === 'patient'): ?>
+                        <!-- Content for patient role -->
+                        <select class="form-select" id="status-select" aria-label="Default select example">
+                            <option selected>Choose status</option>
+                            <option value="busy">Make appointment</option>
+                            <option value="cancel">Cancel appoinment</option>
+                        </select>
+                    <?php else: ?>
+                        <!-- Default content for other roles -->
+                        <p>Default content for other roles.</p>
+                    <?php endif; ?>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -115,6 +128,10 @@ else {
                 $('#status-select').val('available');
             } else if ($(this).text() === "Busy") {
                 $('#status-select').val('busy');
+            } else if ($(this).text() === "Make appointment"){
+                $('#status-select').val('busy');
+            } else if ($(this).text() === "Cancel appoinment") {
+                $('#status-select').val('cancel');
             }
             document.getElementById("status-modal-title").innerHTML = `${timeSlot}`;
         });
@@ -124,11 +141,16 @@ else {
                 $('#status-select').val('available');
             } else if ($(this).text() === "Busy") {
                 $('#status-select').val('busy');
+            } else if ($(this).text() === "Make appointment"){
+                $('#status-select').val('busy');
+            } else if ($(this).text() === "Cancel appoinment") {
+                $('#status-select').val('cancel');
             }
             document.getElementById("status-modal-title").innerHTML = `${timeSlot}`;
         });
     });
     function handleSaveStatus() {
+        console.log("Inside handleSaveStatus");
         let role = '<?php echo $_SESSION['role']; ?>';
         let id = '<?php echo $_SESSION['ID']; ?>';
         let selectedDay = new Date(getCookie("selected_day"));
@@ -139,16 +161,16 @@ else {
         let day = selectedDay.getDay();
         let timeslot = document.getElementById("status-modal-title").innerHTML;
         let status = document.getElementById("status-select").value;
+        
         if (status === "Choose status") {
             alert("Missing required field status!");
             return;
         }
-        if (role === 'patient' && status == 'Busy')
-        {
-            alert("Doctor is busy in this day!")
-            return;
-        }
         $('#status-select').val('Choose status');
+
+
+        // alert(`Debugging ${role} ${id} ${status}`)
+
         jQuery.ajax({
             type: "POST",
             url: "update_timeslot_status.php",  
@@ -163,6 +185,7 @@ else {
             },
 
             success: function(response) {
+                alert(response.message);
                 $('#statusModal').modal('hide');
                 jQuery.ajax({
                     type: "POST",
@@ -175,10 +198,11 @@ else {
                         $('#slot-render').html(response);
                     },
                     error: function(xhr, status, error) {
-                        // Handle error
                         console.log(error);
                     }
+                
                 });
+                
             },
             error: function(xhr, status, error) {
                 console.log(error);
