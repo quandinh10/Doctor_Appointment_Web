@@ -46,7 +46,7 @@ $sql = "CREATE TABLE IF NOT EXISTS slot (
     Date DATE, 
     DayofWeek ENUM('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'),
     TimeSlot TIME,
-    Status ENUM('available','busy', 'appointment') DEFAULT 'available',
+    Status ENUM('available', 'busy', 'appointment') DEFAULT 'available',
     PatientID INT UNSIGNED NULL,
     FOREIGN KEY (PatientID) REFERENCES user(UserID)
 )";

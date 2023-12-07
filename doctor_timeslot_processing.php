@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once 'session.php';
 header('Content-Type: application/json');
 $isDoctor = $_SESSION["role"] == 'doctor';
 if (isset($isDoctor) && isset($_POST["date"]) && isset($_POST["day"]) && isset($_POST["status"]) && isset($_POST["timeslot"])) {
