@@ -24,14 +24,13 @@ $mysqli->select_db("medicalDoctor");
 
 // Create table "patient"
 $sql = "CREATE TABLE IF NOT EXISTS user (
-    userID INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    firstname VARCHAR(255) NOT NULL,
-    lastname VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    ID CHAR(15) GENERATED ALWAYS AS (CONCAT('UID', LPAD(userID,8,'0'))),
-    availableSlot INT(11),
-    role ENUM('patient', 'doctor')
+    UserID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    Firstname VARCHAR(255) NOT NULL,
+    Lastname VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) NOT NULL UNIQUE,
+    Password VARCHAR(255) NOT NULL,
+    -- ID CHAR(15) GENERATED ALWAYS AS (CONCAT('UID', LPAD(userID,8,'0'))),
+    Role ENUM('patient', 'doctor')
 )";
 
 if ($mysqli->query($sql) === TRUE) {
@@ -43,12 +42,13 @@ if ($mysqli->query($sql) === TRUE) {
 
 // Create table "slot"
 $sql = "CREATE TABLE IF NOT EXISTS slot (
-    SlotID INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    SlotID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     Date DATE, 
     DayofWeek ENUM('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'),
     TimeSlot TIME,
-    Status ENUM('available','busy') DEFAULT 'available',
-    PatientID CHAR(15) DEFAULT NULL
+    Status ENUM('available', 'busy', 'appointment') DEFAULT 'available',
+    PatientID INT UNSIGNED NULL,
+    FOREIGN KEY (PatientID) REFERENCES user(UserID)
 )";
 
 if ($mysqli->query($sql) === TRUE) {
