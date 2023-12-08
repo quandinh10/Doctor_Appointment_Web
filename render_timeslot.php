@@ -193,11 +193,13 @@ if (isset($_SESSION["loginSuccess"]) && $_SESSION["loginSuccess"]) {
     $(document).ready(function() {
         $('.btn-doctor-status-1').click(function() {
             var timeSlot = $(this).closest('table').find('thead').eq(0).find('th').eq($(this).closest('td').index()).text();
+            console.log($(this).text());
             if ($(this).text() === "Available") {
                 $('#status-select').val('available');
             } else if ($(this).text() === "Busy") {
                 $('#status-select').val('busy');
             }
+            
             document.getElementById("modal-title").innerHTML = `${timeSlot}`;
         });
 
@@ -245,6 +247,7 @@ if (isset($_SESSION["loginSuccess"]) && $_SESSION["loginSuccess"]) {
         });
 
         $('.btn-doctor-status-2').click(function() {
+            console.log($(this).text());
             var timeSlot = $(this).closest('table').find('thead').eq(1).find('th').eq($(this).closest('td').index()).text();
             if ($(this).text() === "Available") {
                 $('#status-select').val('available');

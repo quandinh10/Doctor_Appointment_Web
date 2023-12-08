@@ -11,7 +11,7 @@ if (isset($isDoctor) && isset($_POST["date"]) && isset($_POST["day"]) && isset($
     $DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     $day = $DAYS_OF_WEEK[$day];
 
-    $query = "SELECT SlotID FROM slot WHERE Date = '{$date}' AND DayofWeek = '{$day}' AND Status = '{$status}' AND TimeSlot = '{$timeslot}'";
+    $query = "SELECT SlotID FROM slot WHERE Date = '{$date}' AND DayofWeek = '{$day}' AND TimeSlot = '{$timeslot}'";
     $res = $mysqli->query($query);
 
     if ($res->num_rows > 0) {
